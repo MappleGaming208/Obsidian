@@ -25,7 +25,7 @@ local hubWin = Library:CreateWindow({
 -- TABS (ORDER: Universal, Main, AutoFarms)
 -- ==========================
 local universalTab = hubWin:AddTab("Universal", "globe", "Basic movement tools")
-local mainTab = hubWin:AddTab("Main", "house", "Main universal features")
+local mainTab = hubWin:AddTab("Main", "house", "Ohio-specific UI and options")
 local autoFarmsTab = hubWin:AddTab("AutoFarms", "tractor", "Autofarming tools")
 
 -- ==========================
