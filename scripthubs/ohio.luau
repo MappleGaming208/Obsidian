@@ -1,260 +1,160 @@
--- ==========================
--- SCRIPT HUB (OBSIDIAN)
--- ==========================
+-- klvxd hub Ohio Script
 local repo = "https://raw.githubusercontent.com/mapplegaming208/Obsidian/main/"
 local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
 local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
 local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
 
+local Options = Library.Options
+local Toggles = Library.Toggles
+
 Library.ForceCheckbox = true
 Library.ShowToggleFrameInKeybinds = true
 
--- ==========================
--- MAIN WINDOW
--- ==========================
+-- Initial Notifications
+Library:Notify({
+    Title = "klvxd hub",
+    Description = "game.PlaceId is " .. game.PlaceId,
+    Time = 4,
+    SoundId = 88243474733896,
+})
+
+Library:Notify({
+    Title = "klvxd hub",
+    Description = "loaded",
+    Time = 4,
+    SoundId = 88243474733896,
+})
+
+Library:Notify({
+    Title = "klvxd hub",
+    Description = "thanks for using this amazing script by some guy on github",
+    Time = 4,
+    SoundId = 7695983456,
+})
+
+-- Main Window
 local hubWin = Library:CreateWindow({
-    Title = "UnSilencedHub v1",
-    Footer = "Version: Mid-Sep",
+    Title = "klvxd hub v1 - ohio",
+    Footer = "version: mid-sep",
     Icon = nil,
     NotifySide = "Right",
     Center = true,
     ShowCustomCursor = true,
 })
 
--- ==========================
--- TABS (ORDER: Universal, Main, AutoFarms)
--- ==========================
-local universalTab = hubWin:AddTab("Universal", "globe", "Basic movement tools")
-local mainTab = hubWin:AddTab("Main", "house", "Ohio-specific UI and options")
-local autoFarmsTab = hubWin:AddTab("AutoFarms", "tractor", "Autofarming tools")
+-- Tabs
+local Tabs = {
+    Universal = hubWin:AddTab("Universal", "globe", "basic movement stuff"),
+    Main = hubWin:AddTab("Main", "house", "main options"),
+    AutoFarms = hubWin:AddTab("AutoFarms", "tractor", "autofarmsssssssssssss"),
+    Settings = hubWin:AddTab("Settings", "settings", "script settings"),
+}
 
--- ==========================
 -- UNIVERSAL TAB
--- ==========================
-local ut = universalTab
+do
+    local UniversalLeft = Tabs.Universal:AddLeftGroupbox("Movement", "wrench")
 
--- ===== Movement Group =====
-local moveGroup = ut:AddGroupBox("Movement Options")
+    -- Noclip toggle
+    UniversalLeft:AddToggle("NoclipToggle", {
+        Text = "No-Clip",
+        Tooltip = "Toggle noclip on/off",
+        Default = false,
+        Callback = function(Value)
+            Toggles.NoclipToggle.Value = Value
+            Library:Notify({
+                Title = "klvxd hub",
+                Description = "Noclip " .. (Value and "enabled" or "disabled"),
+                Time = 3,
+                SoundId = 88243474733896,
+            })
+        end,
+    })
 
-local jumpPowX = 50
-moveGroup:AddSlider({
-    Name = "Jump Power",
-    Min = 1,
-    Max = 200,
-    Default = 50,
-    Callback = function(val)
-        jumpPowX = val
-        local plr = game.Players.LocalPlayer
-        local char = plr.Character or plr.CharacterAdded:Wait()
-        local hum = char:FindFirstChildWhichIsA("Humanoid")
-        if hum then hum.JumpPower = jumpPowX end
-    end
-})
-moveGroup:AddLabel("Adjust your jump height dynamically (50 is default)")
+    -- Fly slider toggle
+    UniversalLeft:AddSlider("FlySpeedSlider", {
+        Text = "Alpha13eds",
+        Default = 50,
+        Min = 1,
+        Max = 100,
+        Rounding = 1,
+        Callback = function(Value)
+            -- Fly logic placeholder
+        end,
+        Tooltip = "Adjust speed for Alpha13eds",
+    })
 
-local walkSpeedX = 16
-moveGroup:AddSlider({
-    Name = "WalkSpeed",
-    Min = 16,
-    Max = 250,
-    Default = 16,
-    Callback = function(val)
-        walkSpeedX = val
-        local plr = game.Players.LocalPlayer
-        local char = plr.Character or plr.CharacterAdded:Wait()
-        local hum = char:FindFirstChildWhichIsA("Humanoid")
-        if hum then hum.WalkSpeed = walkSpeedX end
-    end
-})
-moveGroup:AddLabel("Adjust your walking speed (16 is default)")
+    -- Jump Power slider
+    UniversalLeft:AddSlider("JumpPowerSlider", {
+        Text = "Jump Power",
+        Default = 50,
+        Min = 1,
+        Max = 200,
+        Rounding = 1,
+        Tooltip = "Adjust jump power",
+    })
+end
 
-moveGroup:AddToggle({
-    Name = "Noclip",
-    Default = false,
-    Callback = function(state)
-        local plr = game.Players.LocalPlayer
-        local char = plr.Character or plr.CharacterAdded:Wait()
-        if state then
-            ut.NCConn = game:GetService("RunService").Stepped:Connect(function()
-                for _, part in pairs(char:GetChildren()) do
-                    if part:IsA("BasePart") then part.CanCollide = false end
-                end
-            end)
-            Library:Notify({Title="Noclip Enabled", Description="You can now pass through walls!", Time=4, SoundId=88243474733896})
-        else
-            if ut.NCConn then ut.NCConn:Disconnect() ut.NCConn = nil end
-            for _, part in pairs(char:GetChildren()) do
-                if part:IsA("BasePart") then part.CanCollide = true end
-            end
-            Library:Notify({Title="Noclip Disabled", Description="Collisions restored.", Time=4, SoundId=88243474733896})
-        end
-    end
-})
-moveGroup:AddLabel("Pass through walls (client-side)")
-
--- ===== Flying Group =====
-local flyGroup = ut:AddGroupBox("Flying Options")
-local flyVel89 = 16
-
-flyGroup:AddToggle({
-    Name = "Alpha13eds",
-    Default = false,
-    Callback = function(flyState)
-        local plr = game.Players.LocalPlayer
-        local char = plr.Character or plr.CharacterAdded:Wait()
-        local hum = char:FindFirstChildWhichIsA("Humanoid")
-        local RS = game:GetService("RunService")
-        if flyState then
-            Library:Notify({Title="Fly Enabled", Description="Enjoy flying!", Time=4, SoundId=88243474733896})
-            hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
-            hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
-            hum:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
-            ut.FlyConn = RS.Heartbeat:Connect(function()
-                local dir = Vector3.new()
-                local UIS = game:GetService("UserInputService")
-                if UIS:IsKeyDown(Enum.KeyCode.W) then dir = dir + workspace.CurrentCamera.CFrame.LookVector end
-                if UIS:IsKeyDown(Enum.KeyCode.S) then dir = dir - workspace.CurrentCamera.CFrame.LookVector end
-                if UIS:IsKeyDown(Enum.KeyCode.A) then dir = dir - workspace.CurrentCamera.CFrame.RightVector end
-                if UIS:IsKeyDown(Enum.KeyCode.D) then dir = dir + workspace.CurrentCamera.CFrame.RightVector end
-                if UIS:IsKeyDown(Enum.KeyCode.Space) then dir = dir + Vector3.new(0,1,0) end
-                if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir = dir - Vector3.new(0,1,0) end
-                char:TranslateBy(dir.Unit * flyVel89)
-            end)
-        else
-            if ut.FlyConn then ut.FlyConn:Disconnect() ut.FlyConn = nil end
-            hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
-            hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
-            hum:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
-            Library:Notify({Title="Fly Disabled", Description="Back to normal movement", Time=4, SoundId=88243474733896})
-        end
-    end
-})
-
-flyGroup:AddSlider({
-    Name = "Momentum",
-    Min = 1,
-    Max = 100,
-    Default = flyVel89,
-    Callback = function(val) flyVel89 = val end
-})
-flyGroup:AddLabel("Adjust your flying speed (internal)")
-
--- ===== Extras Group =====
-local extraGroup = ut:AddGroupBox("Extras")
-extraGroup:AddSlider({
-    Name = "Gravity",
-    Min = 0,
-    Max = 196,
-    Default = workspace.Gravity,
-    Callback = function(val) workspace.Gravity = val end
-})
-extraGroup:AddLabel("Adjust gravity (196 is default)")
-
--- ==========================
 -- MAIN TAB
--- ==========================
-local uiGroup = mainTab:AddGroupBox("UI")
+do
+    local MainLeft = Tabs.Main:AddLeftGroupbox("UI", "wrench")
 
-uiGroup:AddToggle({
-    Name = "Crafting UI",
-    Default = true,
-    Callback = function(state)
-        local craftingUI = workspace:FindFirstChild("CraftingUI")
-        if craftingUI then craftingUI.Visible = state end
-        Library:Notify({Title="UI Toggle", Description=state and "Crafting UI shown" or "Crafting UI hidden", Time=4, SoundId=88243474733896})
-    end
-})
-uiGroup:AddLabel("Toggle the Crafting interface")
+    MainLeft:AddToggle("ToggleUI", {
+        Text = "Toggle Crafting/Locker/Cameras UI",
+        Tooltip = "Show or hide main game UI elements",
+        Default = true,
+        Callback = function(Value)
+            -- Toggle actual UI logic
+        end,
+    })
+end
 
-uiGroup:AddToggle({
-    Name = "Locker UI",
-    Default = true,
-    Callback = function(state)
-        local lockerUI = workspace:FindFirstChild("LockerUI")
-        if lockerUI then lockerUI.Visible = state end
-        Library:Notify({Title="UI Toggle", Description=state and "Locker UI shown" or "Locker UI hidden", Time=4, SoundId=88243474733896})
-    end
-})
-uiGroup:AddLabel("Toggle the Locker interface")
-
-uiGroup:AddToggle({
-    Name = "Police Station Cameras",
-    Default = true,
-    Callback = function(state)
-        local camsUI = workspace:FindFirstChild("PoliceCamsUI")
-        if camsUI then camsUI.Visible = state end
-        Library:Notify({Title="UI Toggle", Description=state and "Cameras shown" or "Cameras hidden", Time=4, SoundId=88243474733896})
-    end
-})
-uiGroup:AddLabel("Toggle the Police Station Cameras")
-
--- ==========================
 -- AUTO FARMS TAB
--- ==========================
-local af = autoFarmsTab
+do
+    local AFLeft = Tabs.AutoFarms:AddLeftGroupbox("Farming", "tractor")
 
--- Safes Group
-local safesGroup = af:AddGroupBox("Safes Options")
-safesGroup:AddToggle({ Name = "Auto Small Safes", Default = false, Callback = function(t) end })
-safesGroup:AddLabel("Automatically farm small safes")
-safesGroup:AddDivider()
-safesGroup:AddToggle({ Name = "Auto Big Safes", Default = false, Callback = function(t) end })
-safesGroup:AddLabel("Automatically farm big safes")
-safesGroup:AddDivider()
-safesGroup:AddToggle({ Name = "Auto Gold Small Safes", Default = false, Callback = function(t) end })
-safesGroup:AddLabel("Automatically farm gold small safes")
-safesGroup:AddToggle({ Name = "Auto Gold Big Safes", Default = false, Callback = function(t) end })
-safesGroup:AddLabel("Automatically farm gold big safes")
+    AFLeft:AddToggle("ATMFarm", { Text = "ATM Autofarm", Tooltip = "Autofarm ATMs" })
+    AFLeft:AddToggle("BankFarm", { Text = "Bank Autofarm", Tooltip = "Autofarm Banks" })
+    AFLeft:AddToggle("JewelryFarm", { Text = "Jewelry Store Autofarm", Tooltip = "Autofarm Jewelry" })
+    AFLeft:AddToggle("PickupUseful", { Text = "Pickup Useful Items", Tooltip = "Autopick important items" })
+    AFLeft:AddToggle("SafeFarm", { Text = "Auto Safes", Tooltip = "Autofarm valuable safes" })
+    AFLeft:AddToggle("BigSafe", { Text = "Big Safes", Tooltip = "Include big safes" })
+    AFLeft:AddToggle("SmallSafe", { Text = "Small Safes", Tooltip = "Include small safes" })
+    AFLeft:AddToggle("GoldBigSafe", { Text = "Gold Big Safes", Tooltip = "Include gold big safes" })
+    AFLeft:AddToggle("GoldSmallSafe", { Text = "Gold Small Safes", Tooltip = "Include gold small safes" })
+    AFLeft:AddToggle("CashFarm", { Text = "General Cash Farm", Tooltip = "Autofarm general cash" })
+    AFLeft:AddToggle("HouseStuff", { Text = "Auto Grab House Stuff", Tooltip = "Grab Santa Airdrop, presents, etc." })
+    AFLeft:AddToggle("AutoSell", { Text = "Auto Sell Everything", Tooltip = "Automatically sell all items" })
+    AFLeft:AddToggle("AutoAirdrop", { Text = "Auto Collect Airdrops", Tooltip = "Autocollect airdrops" })
+    AFLeft:AddToggle("AutoCraftRollies", { Text = "Auto Craft Rollies", Tooltip = "Craft your rollies automatically" })
+    AFLeft:AddToggle("AutoSellRollies", { Text = "Auto Sell Rollies", Tooltip = "Automatically sell crafted rollies" })
+    AFLeft:AddToggle("AutoCollectBoxes", { Text = "Auto Collect Boxes", Tooltip = "Autocollect boxes" })
+    AFLeft:AddToggle("AutoOpenBoxes", { Text = "Auto Open Boxes", Tooltip = "Automatically open collected boxes" })
+end
 
--- Crafting Group (Boxes + Rollies)
-local craftingGroup = af:AddGroupBox("Crafting")
-craftingGroup:AddToggle({ Name = "Auto Collect Boxes", Default = false, Callback = function(t) end })
-craftingGroup:AddLabel("Automatically collect boxes")
-craftingGroup:AddDivider()
-craftingGroup:AddToggle({ Name = "Auto Open Boxes", Default = false, Callback = function(t) end })
-craftingGroup:AddLabel("Automatically open collected boxes")
-craftingGroup:AddDivider()
-craftingGroup:AddToggle({ Name = "Auto Craft Rollies", Default = false, Callback = function(t) end })
-craftingGroup:AddLabel("Automatically craft Rollies")
-craftingGroup:AddDivider()
-craftingGroup:AddToggle({ Name = "Auto Sell Rollies", Default = false, Callback = function(t) end })
-craftingGroup:AddLabel("Automatically sell crafted Rollies")
+-- SETTINGS TAB
+do
+    local SettingsLeft = Tabs.Settings:AddLeftGroupbox("Script Settings", "settings")
 
--- House Items Group
-local houseGroup = af:AddGroupBox("House Items")
-houseGroup:AddToggle({ Name = "Auto Grab House Items", Default = false, Callback = function(t) end })
-houseGroup:AddLabel("Automatically collect house items like presents or airdrops")
+    SettingsLeft:AddButton({
+        Text = "Unload Script",
+        Func = function()
+            Library:Unload()
+        end,
+        Tooltip = "Unload klvxd hub safely",
+    })
+end
 
--- General Group
-local generalGroup = af:AddGroupBox("General")
-generalGroup:AddToggle({ Name = "ATM Autofarm", Default = false, Callback = function(t) end })
-generalGroup:AddLabel("Automatically farm ATMs for cash")
-generalGroup:AddDivider()
-generalGroup:AddToggle({ Name = "Bank Autofarm", Default = false, Callback = function(t) end })
-generalGroup:AddLabel("Automatically farm banks for money")
-generalGroup:AddDivider()
-generalGroup:AddToggle({ Name = "Jewellery Store Autofarm", Default = false, Callback = function(t) end })
-generalGroup:AddLabel("Automatically farm the jewellery store")
-generalGroup:AddDivider()
-generalGroup:AddToggle({ Name = "Pickup Useful Items", Default = false, Callback = function(t) end })
-generalGroup:AddLabel("Automatically pick up useful items")
-generalGroup:AddDivider()
-generalGroup:AddToggle({ Name = "General Cash Farm", Default = false, Callback = function(t) end })
-generalGroup:AddLabel("Farm cash from general sources")
-generalGroup:AddDivider()
-generalGroup:AddToggle({ Name = "Auto Sell Everything", Default = false, Callback = function(t) end })
-generalGroup:AddLabel("Automatically sell all items you collect")
-generalGroup:AddDivider()
-generalGroup:AddToggle({ Name = "Auto Collect Airdrops", Default = false, Callback = function(t) end })
-generalGroup:AddLabel("Automatically collect airdrops")
+-- THEME & SAVE MANAGERS
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({ "MenuKeybind" })
+ThemeManager:SetFolder("klvxd hub")
+SaveManager:SetFolder("klvxd hub/specific-game")
+SaveManager:SetSubFolder("specific-place")
+SaveManager:BuildConfigSection(Tabs.Settings)
+ThemeManager:ApplyToTab(Tabs.Settings)
 
--- ==========================
--- FINAL NOTIFICATION
--- ==========================
-Library:Notify({
-    Title = "UnSilencedHub",
-    Description = "Thanks for using this amazing script by some guy on GitHub",
-    Time = 4,
-    SoundId = 7695983456
-})
-
+Library:OnUnload(function()
+    print("klvxd hub unloaded!")
+end)
