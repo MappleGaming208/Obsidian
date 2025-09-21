@@ -1,5 +1,5 @@
--- klvxd hub Ohio Script
-local repo = "https://raw.githubusercontent.com/mapplegaming208/Obsidian/main/"
+-- Ohio Script Hub for Obsidian
+local repo = "https://raw.githubusercontent.com/MappleGaming208/Obsidian/main/"
 local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
 local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
 local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
@@ -10,7 +10,6 @@ local Toggles = Library.Toggles
 Library.ForceCheckbox = true
 Library.ShowToggleFrameInKeybinds = true
 
--- Initial Notifications
 Library:Notify({
     Title = "klvxd hub",
     Description = "game.PlaceId is " .. game.PlaceId,
@@ -18,22 +17,8 @@ Library:Notify({
     SoundId = 88243474733896,
 })
 
-Library:Notify({
-    Title = "klvxd hub",
-    Description = "loaded",
-    Time = 4,
-    SoundId = 88243474733896,
-})
-
-Library:Notify({
-    Title = "klvxd hub",
-    Description = "thanks for using this amazing script by some guy on github",
-    Time = 4,
-    SoundId = 7695983456,
-})
-
--- Main Window
-local hubWin = Library:CreateWindow({
+-- Create main window
+local Window = Library:CreateWindow({
     Title = "klvxd hub v1 - ohio",
     Footer = "version: mid-sep",
     Icon = nil,
@@ -44,117 +29,102 @@ local hubWin = Library:CreateWindow({
 
 -- Tabs
 local Tabs = {
-    Universal = hubWin:AddTab("Universal", "globe", "basic movement stuff"),
-    Main = hubWin:AddTab("Main", "house", "main options"),
-    AutoFarms = hubWin:AddTab("AutoFarms", "tractor", "autofarmsssssssssssss"),
-    Settings = hubWin:AddTab("Settings", "settings", "script settings"),
+    Universal = Window:AddTab("Universal", "globe", "Basic movement & general features"),
+    Main = Window:AddTab("Main", "house", "UI toggles & settings"),
+    AutoFarms = Window:AddTab("AutoFarms", "tractor", "Autofarm features"),
 }
 
--- UNIVERSAL TAB
-do
-    local UniversalLeft = Tabs.Universal:AddLeftGroupbox("Movement", "wrench")
+Library:Notify({
+    Title = "klvxd hub",
+    Description = "loaded",
+    Time = 4,
+    SoundId = 88243474733896,
+})
 
-    -- Noclip toggle
-    UniversalLeft:AddToggle("NoclipToggle", {
-        Text = "No-Clip",
-        Tooltip = "Toggle noclip on/off",
-        Default = false,
-        Callback = function(Value)
-            Toggles.NoclipToggle.Value = Value
-            Library:Notify({
-                Title = "klvxd hub",
-                Description = "Noclip " .. (Value and "enabled" or "disabled"),
-                Time = 3,
-                SoundId = 88243474733896,
-            })
-        end,
-    })
+-- ==== Universal Tab ====
+local LeftGroup_Universal = Tabs.Universal:AddLeftGroupbox("Universal Features", "wrench")
+local RightGroup_Universal = Tabs.Universal:AddRightGroupbox("Misc Features")
 
-    -- Fly slider toggle
-    UniversalLeft:AddSlider("FlySpeedSlider", {
-        Text = "Alpha13eds",
-        Default = 50,
-        Min = 1,
-        Max = 100,
-        Rounding = 1,
-        Callback = function(Value)
-            -- Fly logic placeholder
-        end,
-        Tooltip = "Adjust speed for Alpha13eds",
-    })
+-- Noclip toggle
+LeftGroup_Universal:AddToggle("Noclip", {
+    Text = "NoClip",
+    Default = false,
+    Tooltip = "Toggle noclip",
+    Callback = function(value)
+        Library:Notify({
+            Title = "klvxd hub",
+            Description = "Noclip " .. (value and "enabled" or "disabled"),
+            Time = 4,
+            SoundId = 88243474733896,
+        })
+        -- Your noclip code here
+    end
+})
 
-    -- Jump Power slider
-    UniversalLeft:AddSlider("JumpPowerSlider", {
-        Text = "Jump Power",
-        Default = 50,
-        Min = 1,
-        Max = 200,
-        Rounding = 1,
-        Tooltip = "Adjust jump power",
-    })
-end
+-- JumpPower slider
+LeftGroup_Universal:AddSlider("JumpPower", {
+    Text = "Jump Power",
+    Default = 50,
+    Min = 1,
+    Max = 200,
+    Rounding = 0,
+    Suffix = " studs",
+    Callback = function(value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+    end
+})
 
--- MAIN TAB
-do
-    local MainLeft = Tabs.Main:AddLeftGroupbox("UI", "wrench")
+-- ==== Main Tab ====
+local LeftGroup_Main = Tabs.Main:AddLeftGroupbox("UI Features", "wrench")
+LeftGroup_Main:AddToggle("UIVisibility", {
+    Text = "Show/Hide UI",
+    Default = true,
+    Tooltip = "Toggle visibility of crafting UI, locker UI, cameras etc.",
+    Callback = function(value)
+        -- Example: hide/show some UI elements
+        Library:Notify({
+            Title = "klvxd hub",
+            Description = "UI Visibility: " .. (value and "Shown" or "Hidden"),
+            Time = 4,
+            SoundId = 88243474733896,
+        })
+    end
+})
 
-    MainLeft:AddToggle("ToggleUI", {
-        Text = "Toggle Crafting/Locker/Cameras UI",
-        Tooltip = "Show or hide main game UI elements",
-        Default = true,
-        Callback = function(Value)
-            -- Toggle actual UI logic
-        end,
-    })
-end
+-- ==== AutoFarms Tab ====
+local LeftGroup_Auto = Tabs.AutoFarms:AddLeftGroupbox("Autofarm Features", "tractor")
+-- Placeholder toggles
+LeftGroup_Auto:AddToggle("ATM_AutoFarm", { Text = "ATM Autofarm", Default = false, Tooltip = "Farm ATMs" })
+LeftGroup_Auto:AddToggle("Bank_AutoFarm", { Text = "Bank Autofarm", Default = false, Tooltip = "Farm banks" })
+LeftGroup_Auto:AddToggle("Jewelry_AutoFarm", { Text = "Jewelry Store Autofarm", Default = false, Tooltip = "Farm jewelry store" })
+LeftGroup_Auto:AddToggle("Pickup_Items", { Text = "Pickup Useful Items", Default = false, Tooltip = "Auto pickup useful items" })
+LeftGroup_Auto:AddToggle("AutoSafes", { Text = "Auto Safes", Default = false, Tooltip = "Farm safes" })
+LeftGroup_Auto:AddToggle("GeneralCashFarm", { Text = "General Cash Farm", Default = false, Tooltip = "Farm general cash" })
+LeftGroup_Auto:AddToggle("AutoGrabHouse", { Text = "Auto Grab House Stuff", Default = false, Tooltip = "Grab items like airdrops/presents" })
+LeftGroup_Auto:AddToggle("AutoSellEverything", { Text = "Auto Sell Everything", Default = false, Tooltip = "Sell all collected items" })
+LeftGroup_Auto:AddToggle("AutoCraftRollies", { Text = "Auto Craft Rollies", Default = false, Tooltip = "Auto craft rollies" })
+LeftGroup_Auto:AddToggle("AutoSellRollies", { Text = "Auto Sell Rollies", Default = false, Tooltip = "Auto sell crafted rollies" })
+LeftGroup_Auto:AddToggle("AutoCollectAirdrops", { Text = "Auto Collect Airdrops", Default = false, Tooltip = "Grab all airdrops" })
+LeftGroup_Auto:AddToggle("AutoCollectBoxes", { Text = "Auto Collect Boxes", Default = false, Tooltip = "Collect all boxes" })
+LeftGroup_Auto:AddToggle("AutoOpenBoxes", { Text = "Auto Open Boxes", Default = false, Tooltip = "Open all collected boxes" })
 
--- AUTO FARMS TAB
-do
-    local AFLeft = Tabs.AutoFarms:AddLeftGroupbox("Farming", "tractor")
+-- ==== Settings Tab ====
+local LeftGroup_Settings = Tabs.Main:AddLeftGroupbox("Settings", "settings")
+LeftGroup_Settings:AddButton("Unload", function()
+    Library:Unload()
+end)
 
-    AFLeft:AddToggle("ATMFarm", { Text = "ATM Autofarm", Tooltip = "Autofarm ATMs" })
-    AFLeft:AddToggle("BankFarm", { Text = "Bank Autofarm", Tooltip = "Autofarm Banks" })
-    AFLeft:AddToggle("JewelryFarm", { Text = "Jewelry Store Autofarm", Tooltip = "Autofarm Jewelry" })
-    AFLeft:AddToggle("PickupUseful", { Text = "Pickup Useful Items", Tooltip = "Autopick important items" })
-    AFLeft:AddToggle("SafeFarm", { Text = "Auto Safes", Tooltip = "Autofarm valuable safes" })
-    AFLeft:AddToggle("BigSafe", { Text = "Big Safes", Tooltip = "Include big safes" })
-    AFLeft:AddToggle("SmallSafe", { Text = "Small Safes", Tooltip = "Include small safes" })
-    AFLeft:AddToggle("GoldBigSafe", { Text = "Gold Big Safes", Tooltip = "Include gold big safes" })
-    AFLeft:AddToggle("GoldSmallSafe", { Text = "Gold Small Safes", Tooltip = "Include gold small safes" })
-    AFLeft:AddToggle("CashFarm", { Text = "General Cash Farm", Tooltip = "Autofarm general cash" })
-    AFLeft:AddToggle("HouseStuff", { Text = "Auto Grab House Stuff", Tooltip = "Grab Santa Airdrop, presents, etc." })
-    AFLeft:AddToggle("AutoSell", { Text = "Auto Sell Everything", Tooltip = "Automatically sell all items" })
-    AFLeft:AddToggle("AutoAirdrop", { Text = "Auto Collect Airdrops", Tooltip = "Autocollect airdrops" })
-    AFLeft:AddToggle("AutoCraftRollies", { Text = "Auto Craft Rollies", Tooltip = "Craft your rollies automatically" })
-    AFLeft:AddToggle("AutoSellRollies", { Text = "Auto Sell Rollies", Tooltip = "Automatically sell crafted rollies" })
-    AFLeft:AddToggle("AutoCollectBoxes", { Text = "Auto Collect Boxes", Tooltip = "Autocollect boxes" })
-    AFLeft:AddToggle("AutoOpenBoxes", { Text = "Auto Open Boxes", Tooltip = "Automatically open collected boxes" })
-end
-
--- SETTINGS TAB
-do
-    local SettingsLeft = Tabs.Settings:AddLeftGroupbox("Script Settings", "settings")
-
-    SettingsLeft:AddButton({
-        Text = "Unload Script",
-        Func = function()
-            Library:Unload()
-        end,
-        Tooltip = "Unload klvxd hub safely",
-    })
-end
-
--- THEME & SAVE MANAGERS
+-- ===== Theme & Save managers =====
 ThemeManager:SetLibrary(Library)
 SaveManager:SetLibrary(Library)
 SaveManager:IgnoreThemeSettings()
 SaveManager:SetIgnoreIndexes({ "MenuKeybind" })
-ThemeManager:SetFolder("klvxd hub")
-SaveManager:SetFolder("klvxd hub/specific-game")
+ThemeManager:SetFolder("KlvxdHub")
+SaveManager:SetFolder("KlvxdHub/specific-game")
 SaveManager:SetSubFolder("specific-place")
-SaveManager:BuildConfigSection(Tabs.Settings)
-ThemeManager:ApplyToTab(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Main)
+ThemeManager:ApplyToTab(Tabs.Main)
 
 Library:OnUnload(function()
-    print("klvxd hub unloaded!")
+    print("Klvxd Hub unloaded!")
 end)
